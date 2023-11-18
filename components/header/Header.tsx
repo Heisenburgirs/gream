@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useWeb3Auth } from "../../services/web3auth";
 import { Button } from "@/components/ui/button"
 import { ethers } from "ethers";
@@ -14,24 +14,45 @@ export const Header = () => {
     logout,
   } = useWeb3Auth();*/
 
-  const injected = window.ethereum
   const [signer, setSigner] = useState<string>()
+  const ethereumRef = useRef(window.ethereum);
+
+  const fetchAddress = async () => {
+    if (window.ethereum.isMiniPay) {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const wallet = provider.getSigner();
+      const walletAddress = await wallet.getAddress();
+      setSigner(walletAddress.toString());
+    } else {
+      console.error("MiniPay provider not detected");
+    }
+  };
 
   useEffect(() => {
+    const handleEthereumChange = () => {
+      ethereumRef.current = window.ethereum;
+      fetchAddress(); // Re-fetch the address when ethereum changes
+    };
 
-    const fetchAddress = async () => {
-      if (window.ethereum && window.ethereum.isMiniPay) {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const wallet = provider.getSigner()
-        const walletAddress = await wallet.getAddress()
-        setSigner(walletAddress.toString())
-      } else {
-          console.error("MiniPay provider not detected");
-      }
+    if (ethereumRef.current && typeof ethereumRef.current.on === 'function') {
+      ethereumRef.current.on('accountsChanged', handleEthereumChange);
+      // Add other relevant event listeners if needed
     }
 
-    fetchAddress()
-  }, [injected])
+    return () => {
+      // Clean up event listeners when the component unmounts
+      if (ethereumRef.current && typeof ethereumRef.current.removeListener === 'function') {
+        ethereumRef.current.removeListener('accountsChanged', handleEthereumChange);
+        // Remove other event listeners if added
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.ethereum) {
+      fetchAddress();
+    }
+  }, [ethereumRef.current]);
 
   const formatAddress = (signer: string) => {
     // Take the first 6 characters after '0x' and the last 4 characters
