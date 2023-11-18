@@ -91,7 +91,7 @@ export const DisplayFlow = () => {
   }
 
 	const fetchUserAddress = useCallback(async () => {
-    if (window.ethereum && window.ethereum.isMiniPay)
+    //if (window.ethereum && window.ethereum.isMiniPay)
 		try {
 		const provider = await new ethers.providers.Web3Provider(window.ethereum);
 		const signer = provider.getSigner();

@@ -15,7 +15,7 @@ export const Header = () => {
   } = useWeb3Auth();*/
 
   const [signer, setSigner] = useState<string>()
-  const ethereumRef = useRef(window.ethereum);
+  const ethereumRef = useRef<any>(null);
 
   const fetchAddress = async () => {
     if (window.ethereum.isMiniPay) {
@@ -29,6 +29,8 @@ export const Header = () => {
   };
 
   useEffect(() => {
+    ethereumRef.current = window.ethereum;
+
     const handleEthereumChange = () => {
       ethereumRef.current = window.ethereum;
       fetchAddress(); // Re-fetch the address when ethereum changes
