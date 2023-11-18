@@ -7,7 +7,7 @@
 Yarn & Yarn dev to get started.
 
 ## Description
-Stream $G tokens to twitter users by their handles.
+Stream $G tokens to anyone using Minipay
 
 ## Network
 To change network, simply set <CHAIN_CONFIG_TYPE>("YOUR_NETWORK_HERE") to your desired network. Available networks are in /config/chainConfig.
