@@ -59,7 +59,7 @@ export type Payment = {
 
 export const DisplayFlow = () => {
   const { userAddress, setUserAddress, RUDAddress, setRUDAddress, setButtonName, setUserInfo } = useUserContext();
-	const { web3Auth, provider, getUserInfo } = useWeb3Auth();
+	const { web3Auth, getUserInfo } = useWeb3Auth();
   const { createFlow, toggleCreateFlow } = useFlowContext();
   const { updateFlow, toggleUpdateFlow } = useFlowContext();
   const { deleteFlow, toggleDeleteFlow } = useFlowContext();
@@ -83,10 +83,17 @@ export const DisplayFlow = () => {
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
 	
+  const formatAddress = (signer: string) => {
+    // Take the first 6 characters after '0x' and the last 4 characters
+    if (signer) {
+      return `${signer.substring(0, 6)}...${signer.substring(signer.length - 6)}`;
+    }
+  }
+
 	const fetchUserAddress = useCallback(async () => {
+    if (window.ethereum && window.ethereum.isMiniPay)
 		try {
-		const web3authProvider = await web3Auth?.connect();
-		const provider = await new ethers.providers.Web3Provider(web3authProvider as any);
+		const provider = await new ethers.providers.Web3Provider(window.ethereum);
 		const signer = provider.getSigner();
 		const address = await signer.getAddress();
 		setUserAddress(address.toLowerCase());
@@ -248,9 +255,9 @@ export const DisplayFlow = () => {
 	const columns: ColumnDef<Payment>[] = [
 		{
 			accessorKey: "handle",
-			header: "Handle",
+			header: "Recipient",
 			cell: ({ row }) => (
-				<div onClick={() => copyToClipboard(row.getValue("handle"))} className="hover:cursor-pointer">{row.getValue("handle")}</div>
+				<div onClick={() => copyToClipboard(row.getValue("handle"))} className="hover:cursor-pointer">{formatAddress(row.getValue("handle"))}</div>
 			),
 		},
 		{
@@ -280,7 +287,7 @@ export const DisplayFlow = () => {
 			accessorKey: "wallet",
 			header: "Wallet",
 			cell: ({ row }) => (
-				<div onClick={() => copyToClipboard(row.getValue("wallet"))} className="hover:cursor-pointer">{row.getValue("wallet")}</div>
+				<div onClick={() => copyToClipboard(row.getValue("wallet"))} className="hover:cursor-pointer">{formatAddress(row.getValue("wallet"))}</div>
 			),
 		},
 		{

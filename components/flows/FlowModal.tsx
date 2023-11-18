@@ -35,13 +35,18 @@ const FlowModal: React.FC<Props> = ({ flowType }) => {
   const { web3Auth } = useWeb3Auth();
 
   useEffect(() => {
-    const getWeb3Provider = async () => {
-      const web3authProvider = await web3Auth?.connect();
-      const provider = new ethers.providers.Web3Provider(web3authProvider as any);
-      setProvider(provider);
-    };
-    getWeb3Provider();
-  }, [web3Auth]);
+
+    const fetchProvider = async () => {
+      if (window.ethereum && window.ethereum.isMiniPay) {
+        const provider = new ethers.providers.Web3Provider(window.ethereum as any);
+        setProvider(provider);
+      } else {
+          console.error("MiniPay provider not detected");
+      }
+    }
+
+    fetchProvider()
+  }, [window.ethereum])
 
   const createNewFlow = async (recipientAddress: string, flowRate: string) => {
     try {
@@ -184,10 +189,7 @@ const FlowModal: React.FC<Props> = ({ flowType }) => {
     console.log(signer);
     console.log(await superSigner.getAddress());
     const gToken = await sf.loadSuperToken("0x62B8B11039FcfE5aB0C56E502b1C372A3d2a9c7A");
-  
-    console.log(gToken);
     
-  
     try {
 
       if (!resolvedRecipient) {
@@ -263,14 +265,7 @@ const FlowModal: React.FC<Props> = ({ flowType }) => {
       recipientAddress = RUDAddress ?? "";
     } else {
       // Perform the Firebase database check for other actions
-      recipientAddress = await getUserWalletAddress(recipient);
-  
-      if (recipientAddress === null) {
-        setIsButtonLoading(false);
-        toastMessageNoUser();
-        console.error("No such user");
-        return;
-      }
+      recipientAddress = recipient;
     }
 
     if (!recipientAddress && !flowRate && flowType !== "deleteFlow" && !buttonName) {
@@ -349,7 +344,6 @@ const FlowModal: React.FC<Props> = ({ flowType }) => {
       }
     }
   }; 
-
 
   const handleSuccessClose = () => {
     if (flowType === "createFlow") {

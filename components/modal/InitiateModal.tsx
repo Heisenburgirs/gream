@@ -60,7 +60,7 @@ const InitiateModal: React.FC<Props> = ({
   const { buttonName, setButtonName } = useUserContext();
 
   return (
-    <Card className="w-[500px] p-4">
+    <Card className="sm:w-[350px] md:w-[500px] p-4">
       <CardHeader>
             <CardTitle className="text-3xl">
               {titleText}
@@ -74,11 +74,10 @@ const InitiateModal: React.FC<Props> = ({
                   <div className="flex flex-col space-y-1.5">
                     <Label htmlFor="name" className="text-xl">Receiver</Label>
                     <div className="relative text-base">
-                      <div className="absolute inset-y-0 left-0 flex items-center pl-3">@</div>
                       <Input
                       className="text-base pl-[30px] py-2"
                       id="name" 
-                      placeholder="Superfluid_HQ..."
+                      placeholder="Enter address..."
                       name="recipient"
                       value={recipient}
                       onChange={handleRecipientChange}
@@ -114,7 +113,7 @@ const InitiateModal: React.FC<Props> = ({
               </Alert>
             </div>
             }
-            <CardFooter className="flex justify-between">
+            <CardFooter className="flex justify-between gap-4">
               <Button
                 variant={`${flowType === 'deleteFlow' ? 'outline' : 'destructive'}`}
                 className={
