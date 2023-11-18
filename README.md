@@ -1,19 +1,12 @@
 # Gream
 
-
-
 ## Getting started
 
 Yarn & Yarn dev to get started.
 
+## Testing
+
+Setup connection to your localhost using ngrok http 3000
+
 ## Description
-Stream $G tokens to anyone using Minipay
-
-## Network
-To change network, simply set <CHAIN_CONFIG_TYPE>("YOUR_NETWORK_HERE") to your desired network. Available networks are in /config/chainConfig.
-
-## Roadmap
-Integrate determenistic wallets fully & deploy app on Celo, among other networks, once EntryPoint & Bundlers become available.
-
-## Project status
-Working progress.
+Stream $G tokens to anyone using Minipay.
